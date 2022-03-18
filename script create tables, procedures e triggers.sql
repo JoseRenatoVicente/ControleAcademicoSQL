@@ -1,4 +1,10 @@
-create table Aluno(
+
+CREATE DATABASE ControleAcademico1;
+GO
+
+USE ControleAcademico1;
+
+CREATE TABLE Aluno(
 	CPF varchar(14) not null,
 	RA varchar(14) not null,
 	Nome varchar(60) not null,
@@ -8,7 +14,7 @@ create table Aluno(
 GO
 
 
-create table Disciplina(
+CREATE TABLE Disciplina(
 	Sigla varchar(10) not null,
 	Nome varchar(60) not null,
 	CargaHoraria int not null,
@@ -16,7 +22,7 @@ create table Disciplina(
 );
 GO
 
-create table Matricula(
+CREATE TABLE Matricula(
 	NumeroMatricula int not null identity,
 	Nota1 DECIMAL(5,2),
 	Nota2 DECIMAL(5,2),
@@ -98,19 +104,10 @@ SELECT Aluno.Nome, Matricula.Situacao, Aluno.RA, Matricula.CPFAluno, Matricula.N
 FROM Matricula JOIN Disciplina ON Disciplina.Sigla = Matricula.SiglaDisciplina JOIN Aluno ON Aluno.CPF = Matricula.CPFAluno
 WHERE Matricula.SiglaDisciplina = @SiglaDisciplina AND Matricula.Ano = @Ano 
 
-
-/*SELECT A.Nome, M.Situacao, A.RA, M.CPFAluno, M.Nota1, M.Nota2, M.Media, M.Faltas, M.Ano, M.Semestre, D.Nome AS [Disciplina]
-FROM Matricula AS M, Aluno AS A, Disciplina AS D
-WHERE M.SiglaDisciplina = @SiglaDisciplina AND M.Ano = @Ano AND D.Sigla = @SiglaDisciplina AND A.CPF = M.CPFAluno*/
-
 GO
 
 CREATE PROCEDURE BoletimAluno @CPF varchar(14), @Ano int, @Semestre int
 AS
-
-/*SELECT D.Nome AS [Nome Disciplina], M.Nota1, M.Nota2, M.NotaSubstutiva, M.Media, M.Faltas, (D.CargaHoraria * 0.25) [Faltas Permitidas], M.Situacao AS [Situacao Final], M.Ano, M.Semestre
-FROM Matricula AS M, Disciplina AS D
-WHERE M.CPFAluno = @CPF AND M.Ano = @Ano AND D.Sigla = M.SiglaDisciplina AND M.Semestre = @Semestre*/
 
 SELECT Disciplina.Nome AS "Nome Disciplina", Matricula.Nota1, Matricula.Nota2, Matricula.NotaSubstutiva, Matricula.Media, Matricula.Faltas, (Disciplina.CargaHoraria * 0.25) "Faltas Permitidas", Matricula.Situacao AS "Situacao Final", Matricula.Ano, Matricula.Semestre
 FROM Matricula JOIN Disciplina ON Disciplina.Sigla = Matricula.SiglaDisciplina
@@ -120,10 +117,6 @@ GO
 
 CREATE PROCEDURE MostrarAlunosReprovados @Ano int
 AS
-
-/*SELECT A.Nome, A.RA, M.CPFAluno, M.Nota1, M.Nota2, M.Media, M.Faltas, M.Ano, M.Semestre, D.Nome AS [Disciplina]
-FROM Matricula AS M, Aluno AS A, Disciplina AS D
-WHERE M.Ano = @Ano AND D.Sigla = M.SiglaDisciplina AND M.Situacao like '%REPROVADO%' AND M.CPFAluno = A.CPF*/
 
 SELECT Aluno.Nome, Aluno.RA, Matricula.CPFAluno, Matricula.Nota1, Matricula.Nota2, Matricula.Media, Matricula.Faltas, Matricula.Ano, Matricula.Semestre, Disciplina.Nome AS "Disciplina"
 FROM Matricula JOIN Aluno on Matricula.CPFAluno = Aluno.CPF join Disciplina ON Matricula.SiglaDisciplina = Disciplina.Sigla
